@@ -4,7 +4,6 @@ wheel
 pandas
 numpy
 matplotlib
-itertools
 flask
 lightfm
 gunicorn
