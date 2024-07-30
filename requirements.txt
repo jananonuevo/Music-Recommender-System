@@ -2,6 +2,13 @@ pip
 setuptools
 wheel
 pandas
+numpy
+pickle
+matplotlib
+tqdm
+sys
+io
+itertools
 flask
 lightfm
 gunicorn
