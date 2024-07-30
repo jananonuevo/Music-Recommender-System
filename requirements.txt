@@ -1,6 +1,7 @@
 pip
 setuptools
 wheel
+pandas
 flask
 lightfm
 gunicorn
