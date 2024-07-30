@@ -114,6 +114,102 @@ def display_side_by_side(*args):
         html_str+=df.to_html()
     display_html(html_str.replace('table','table style="display:inline"'),raw=True)
 
+def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10):
+    import csv
+    import pandas as pd
+
+    extraversion = 3
+    agreeableness = 3
+    openness = 3
+    conscientiousness = 3
+    neuroticism = 3
+
+    userid = "U101"
+    data = pd.DataFrame({
+            'userID': userid,
+            'E_Score': extraversion,
+            'E_High': 0,
+            'E_Avg': 0,
+            'E_Low': 0,
+            'A_Score': agreeableness,
+            'A_High': 0,
+            'A_Avg': 0,
+            'A_Low': 0,
+            'N_Score': neuroticism,
+            'N_High': 0,
+            'N_Avg': 0,
+            'N_Low': 0,
+            'C_Score': conscientiousness,
+            'C_High': 0,
+            'C_Avg': 0,
+            'C_Low': 0,
+            'O_Score': openness,
+            'O_High': 0,
+            'O_Avg': 0,
+            'O_Low': 0,
+            'genre_EDM': 0,
+            'genre_country': 0,
+            'genre_indie': 0,
+            'genre_metal': 0,
+            'genre_pop': 0,
+            'genre_pop-punk': 0,
+            'genre_rap': 0,
+            'genre_rock': 0,
+            'genre_singer-songwriter': 0,
+            'genre_soul': 0
+            }, index=['userID'])
+
+    #0: E, 1: A, 2: O, 3: C, 4: N
+    self_ratings = [0,0,0,0,0]
+
+    self_ratings[0] = ((((extraversion / 2) - 3.2) / 0.8) * 10) + 50
+    self_ratings[1] = ((((agreeableness / 2) - 3.8) / 0.6) * 10) + 50
+    self_ratings[2] = ((((openness / 2) - 3.7) / 0.7) * 10) + 50
+    self_ratings[3] = ((((conscientiousness / 2) - 3.6) / 0.7) * 10) + 50
+    self_ratings[4] = ((((neuroticism / 2) - 3.0) / 0.8) * 10) + 50
+
+    print(str(self_ratings) +"\n")
+
+    for i in range(0, 4):
+        if self_ratings[i] < 19:
+            if i == 0:
+                data['E_Low'] = 1
+            elif i == 1:
+                data['A_Low'] = 1
+            elif i == 2:
+                data['O_Low'] = 1
+            elif i == 3:
+                data['C_Low'] = 1
+            elif i == 4:
+                data['N_Low'] = 1
+        elif self_ratings[i] >= 19 and self_ratings[i] <= 28:
+            if i == 0:
+                data['E_Avg'] = 1
+            elif i == 1:
+                data['A_Avg'] = 1
+            elif i == 2:
+                data['O_Avg'] = 1
+            elif i == 3:
+                data['C_Avg'] = 1
+            elif i == 4:
+                data['N_Avg'] = 1
+        elif self_ratings[i] > 28:
+            if i == 0:
+                data['E_High'] = 1
+            elif i == 1:
+                data['A_High'] = 1
+            elif i == 2:
+                data['O_High'] = 1
+            elif i == 3:
+                data['C_High'] = 1
+            elif i == 4:
+                data['N_High'] = 1
+
+    print(data)
+
+    data.to_csv('dummy_users.csv', mode='a', index=False, header=False)
+
+
 def generateRecommendations(model, userIDs, k):
     mapper_to_internal_ids = dataset.mapping()[2]
     mapper_to_external_ids = {v: k for k, v in mapper_to_internal_ids.items()}
@@ -149,3 +245,4 @@ filtered_userids = users.loc[users['userID'] == 'U50']
 convert_to_numpyndarray = filtered_userids.to_numpy() 
 
 generateRecommendations(model, users['userID'][users['userID'] == 'U49'], 3)
+
