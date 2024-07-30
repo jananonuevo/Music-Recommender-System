@@ -3,7 +3,6 @@ setuptools
 wheel
 pandas
 numpy
-pickle
 matplotlib
 tqdm
 sys
