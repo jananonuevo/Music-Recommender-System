@@ -6,5 +6,6 @@ numpy
 matplotlib
 flask
 azure-storage-blob
+azure-identity
 lightfm
 gunicorn
