@@ -9,6 +9,10 @@ from lightfm import LightFM
 from lightfm.data import Dataset
 from lightfm import cross_validation
 
+import os, uuid
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+
 data = pd.read_csv('ratings.csv')
 users = pd.read_csv('users.csv')
 songs= pd.read_csv('songs.csv')
@@ -149,6 +153,32 @@ df_new_users =  {
             'top9': '',
             'top10': ''
             }
+
+def append_row_to_csv_blob(connect_str, container_name, blob_name, local_file_path, new_row):
+  # Connect to Azure Storage
+  blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+  container_client = blob_service_client.get_container_client(container_name)
+  blob_client = container_client.get_blob_client(blob_name)
+
+  # Download blob to local file
+  with open(local_file_path, "wb") as download_file:
+      download_file.write(blob_client.download_blob().readall())
+
+  # Read CSV into Pandas DataFrame
+  df = pd.read_csv(local_file_path)
+  # Append new row
+  new_df = pd.concat([df, new_row], ignore_index=True)
+
+  # Save DataFrame to CSV
+  new_df.to_csv(local_file_path, index=False)
+
+  # Upload modified CSV to Azure Storage
+  with open(local_file_path, "rb") as data:
+      blob_client.upload_blob(data, overwrite=True)
+
+  # Delete local file
+  os.remove(local_file_path)
+
 
 def reverseScore(r):
     if(r == 5):
@@ -306,7 +336,7 @@ def newUserRecommendation(model, dataset, userID=None, new_user_feature=None, k=
       global df_new_users
 
       userID = getLargestNumber() + 1
-      df_new_users['userID'] = 'U' +str(userID)
+      df_new_users['userID'] = 'U' + str(userID)
 
       mapper_to_internal_ids = dataset.mapping()[2]
       mapper_to_external_ids = {v: k for k, v in mapper_to_internal_ids.items()}
@@ -336,7 +366,6 @@ def newUserRecommendation(model, dataset, userID=None, new_user_feature=None, k=
         df_new_users[df_col] = song_id
 
       return songs_recommended[['songID', 'name', 'artists']]
-    
 
 @app.route('/')
 def index():
@@ -376,9 +405,15 @@ def get_recos():
         df_new_users['coursestrand'] = request.form['coursestrand']
         
         df_toappend = pd.DataFrame([df_new_users])
-        df_existing = pd.read_csv('new_users.csv')
-        df_combined = pd.concat([df_existing, df_toappend], ignore_index=True)
-        df_combined.to_csv('new_users.csv', index=False)
+
+        # Example usage
+        connect_str = "DefaultEndpointsProtocol=https;AccountName=musicrecommender;AccountKey=xuY+OSYHySZDuIiMnbR5n6u0RvY7cjfqrkUupdG+KVJ5bFmR8N+PSyQPzxktS4SFFfW49mhGu/k0+AStYg8XXw==;EndpointSuffix=core.windows.net"
+        container_name = "csvs"
+        blob_name = "new_users.csv"
+        local_file_path = "new_users.csv"
+        new_row = df_toappend
+
+        append_row_to_csv_blob(connect_str, container_name, blob_name, local_file_path, new_row)
 
         return render_template("index.html", htmlstr=recommendations.to_html())
 
