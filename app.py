@@ -152,32 +152,37 @@ df_new_users =  {
             'top8': '',
             'top9': '',
             'top10': ''
-            }
+            }   
 
-def append_row_to_csv_blob(connect_str, container_name, blob_name, local_file_path, new_row):
-  # Connect to Azure Storage
-  blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-  container_client = blob_service_client.get_container_client(container_name)
-  blob_client = container_client.get_blob_client(blob_name)
+connect_str = "DefaultEndpointsProtocol=https;AccountName=musicrecommender;AccountKey=xuY+OSYHySZDuIiMnbR5n6u0RvY7cjfqrkUupdG+KVJ5bFmR8N+PSyQPzxktS4SFFfW49mhGu/k0+AStYg8XXw==;EndpointSuffix=core.windows.net"
+container_name = "csvs"
+blob_name = "new_users.csv"
 
-  # Download blob to local file
-  with open(local_file_path, "wb") as download_file:
-      download_file.write(blob_client.download_blob().readall())
+def getCSV(connect_str, container_name, blob_name):
+    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    container_client = blob_service_client.get_container_client(container_name)
 
-  # Read CSV into Pandas DataFrame
-  df = pd.read_csv(local_file_path)
-  # Append new row
-  new_df = pd.concat([df, new_row], ignore_index=True)
+    blob_client = container_client.get_blob_client(blob_name)
 
-  # Save DataFrame to CSV
-  new_df.to_csv(local_file_path, index=False)
+    download_stream = blob_client.download_blob()
+    df = pd.read_csv(download_stream)
 
-  # Upload modified CSV to Azure Storage
-  with open(local_file_path, "rb") as data:
-      blob_client.upload_blob(data, overwrite=True)
+    return df
 
-  # Delete local file
-  os.remove(local_file_path)
+def append_row_to_csv_blob(connect_str, container_name, blob_name, new_row):
+    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    container_client = blob_service_client.get_container_client(container_name)
+
+    blob_client = container_client.get_blob_client(blob_name)
+
+    download_stream = blob_client.download_blob()
+    df = pd.read_csv(download_stream)
+    new_row = pd.DataFrame([new_row])
+    new_df = pd.concat([df, new_row], ignore_index=True)
+
+    csv_data = new_df.to_csv(index=False)
+
+    blob_client.upload_blob(csv_data, overwrite=True)
 
 
 def reverseScore(r):
@@ -324,7 +329,7 @@ def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, top_genres_
     return df_personality_profile
 
 def getLargestNumber():
-    new_users = pd.read_csv('new_users.csv')
+    new_users = getCSV(connect_str, container_name, blob_name)
     userID = new_users['userID'].tolist()
     userID_remove_duplicates = list(set(userID))
     userID_remove_U = [element.replace('U', '') for element in userID_remove_duplicates]
@@ -336,12 +341,10 @@ def newUserRecommendation(model, dataset, userID=None, new_user_feature=None, k=
       global df_new_users
 
       userID = getLargestNumber() + 1
-      df_new_users['userID'] = 'U' + str(userID)
+      df_new_users['userID'] = 'U' +str(userID)
 
       mapper_to_internal_ids = dataset.mapping()[2]
       mapper_to_external_ids = {v: k for k, v in mapper_to_internal_ids.items()}
-      user_mapper_to_internal = dataset.mapping()[0]
-      user_mapper_to_external = {v: k for k, v in user_mapper_to_internal.items()}
 
       dataset.fit(users=[userID], items=songs['songID'], user_features=new_user_feature, item_features=all_item_features)
 
@@ -403,17 +406,8 @@ def get_recos():
         df_new_users['email'] = request.form['email']
         df_new_users['educationallvl'] = request.form['edu']
         df_new_users['coursestrand'] = request.form['coursestrand']
-        
-        df_toappend = pd.DataFrame([df_new_users])
 
-        # Example usage
-        connect_str = "DefaultEndpointsProtocol=https;AccountName=musicrecommender;AccountKey=xuY+OSYHySZDuIiMnbR5n6u0RvY7cjfqrkUupdG+KVJ5bFmR8N+PSyQPzxktS4SFFfW49mhGu/k0+AStYg8XXw==;EndpointSuffix=core.windows.net"
-        container_name = "csvs"
-        blob_name = "new_users.csv"
-        local_file_path = "new_users.csv"
-        new_row = df_toappend
-
-        append_row_to_csv_blob(connect_str, container_name, blob_name, local_file_path, new_row)
+        append_row_to_csv_blob(connect_str, container_name, blob_name, df_new_users)
 
         return render_template("index.html", htmlstr=recommendations.to_html())
 
