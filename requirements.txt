@@ -6,5 +6,4 @@ numpy
 matplotlib
 flask
 lightfm
-azure
 gunicorn
