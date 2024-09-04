@@ -1,202 +1,405 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
-        <title>Music Recommender System</title>
+        <title>Using Item Personality Based Profiling in Music Recommender Systems</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="icon" type="image/x-icon" href="assets/img/FF_Logos Engineering & Design_LO.png">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+        <style>
+            .intro{
+                background-image: url('/static/header-opaque.jpg'); 
+                background-repeat: no-repeat; 
+                background-size:cover;
+                color: white; 
+                height: 40rem;
+            }
+        </style>
     </head>
-<body>
-    <form method="POST">
-        <label for="name">Full Name: </label>
-        <input type="text" id="name" name="name"><br><br>
 
-        <label for="idno">Student ID Number: </label>
-        <input type="text" id="idno" name="idno"><br><br>
-        
-        <label for="email">Email: </label>
-        <input type="text" id="email" name="email"><br><br>
+    <body>
+        <nav class="navbar navbar-expand-lg p-2" style="background-color: rgb(3, 37, 69); box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
+            <div class="mx-3" style="border-right: 1px solid white">
+                <b><a class="navbar-brand" href="#" style="color: white">Thesis</a></b>
+            </div>
+             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+  
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav" style="color: white">
+                <li class="nav-item active">
+                  <a class="nav-link mx-3" href="#" style="color: white">Recommender Survey</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-3" href="#" style="color: white">Results</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-3" href="#" style="color: white">Model Survey</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
 
-        <label for="edu">Educational Level: </label>
-        <input type="text" id="edu" name="edu"><br><br>
-        
-        <label for="coursestrand">Course/Strand: </label>
-        <input type="text" id="coursestrand" name="coursestrand"><br><br>
+        <div class="w-100 text-center outer-div d-flex justify-content-center align-items-center intro">
+            <div class="inner-div w-75">
+                <h1 class="display-5 fade-in" style="font-weight: bold">Using Item Personality Based Profiling in Music Recommender Systems</h1>
+                <br>
+            </div>
+        </div>
 
-        <br><br>
-        I see myself as someone who is..
+        <div class="container d-flex align-items-center justify-content-center" id="recommendersurvey">
+            <div class='m-5' style="background-color: rgba(255, 255, 255, 0.95);">
+                <br>
+                <h3 class="text-center m-2">Recommender Survey</h3>
+                <form method="POST">
+                <div class="row">
+                    <div class="col m-5">
+                            <h6 class="text-uppercase fw-bold mb-4">Personal Information</h6>
+                            <div class="form-group">
+                              <label for="formGroupExampleInput">Name</label>
+                              <input type="text" class="form-control" id="formGroupExampleInput" name="name" required>
+                            </div>
+                            
+                            <br>
         
-        <br><br>
-        
-        1) is reserved... <br>
-        <input type="radio" name="q1" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q1" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q1" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q1" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q1" value="5">
-            <label for="3">5</label>
-        
-        <br><br>
-        
-        2) is generally trusting... <br>
-        <input type="radio" name="q2" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q2" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q2" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q2" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q2" value="5">
-            <label for="3">5</label>
-        
-        <br><br>
-        
-        3) tends to be lazy... <br>
-        <input type="radio" name="q3" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q3" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q3" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q3" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q3" value="5">
-            <label for="3">5</label>
-            
-        <br><br>
+                            <div class="form-group">
+                              <label for="formGroupExampleInput2">Student ID Number</label>
+                              <input type="text" class="form-control" id="formGroupExampleInput2" name="idno" required>
+                            </div>
 
-        4) is relaxed, handles stress well... <br>
-        <input type="radio" name="q4" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q4" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q4" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q4" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q4" value="5">
-            <label for="3">5</label>
+                            <br>
         
-        <br><br>
-
-        5) has few artistic interests... <br>
-        <input type="radio" name="q5" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q5" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q5" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q5" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q5" value="5">
-            <label for="3">5</label>
+                            <div class="form-group">
+                              <label for="formGroupExampleInput2">Email</label>
+                              <input type="text" class="form-control" id="formGroupExampleInput2" name="email" required>
+                            </div>
         
-        <br><br>
-
-        6) is outgoing and sociable... <br>
-        <input type="radio" name="q6" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q6" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q6" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q6" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q6" value="5">
-            <label for="3">5</label>
+                            <br>
         
-        <br><br>
-
-        7) tends to find fault with others... <br>
-        <input type="radio" name="q7" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q7" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q7" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q7" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q7" value="5">
-            <label for="3">5</label>
+                            <div class="form-group">
+                                <label for="formGroupExampleInput2">Educational Level</label>
+                                <input type="text" class="form-control" id="formGroupExampleInput2" name="edu" required>
+                            </div>
         
-        <br><br>
+                            <br>
 
-        8) does a thorough job... <br>
-        <input type="radio" name="q8" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q8" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q8" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q8" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q8" value="5">
-            <label for="3">5</label>
-        
-        <br><br>
+                            <div class="form-group">
+                                <label for="formGroupExampleInput2">Course / Strand</label>
+                                <input type="text" class="form-control" id="formGroupExampleInput2" name="coursestrand" required>
+                            </div>
+                            
+                            <br>
+                            
+                            Select your top 5 favorite genres:
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="pop" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Pop </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="rap" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Rap </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="rock" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Rock </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="country" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Country </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="indie" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> POV: Indie </label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="metal" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Metal </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="poppunk" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Pop-Punk </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="edm" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> EDM </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="soul" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Soul </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="genre" value="singersongwriter" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1"> Singer-songwriter </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col m-5">
+                        <h6 class="text-uppercase fw-bold mb-4">I see myself as someone who is..</h6>
+                        
+                        1) is reserved... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q1" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q1" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q1" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q1" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q1" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+                        
+                        2) is generally trusting... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q2" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q2" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q2" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q2" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q2" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+                        
+                        3) tends to be lazy... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q3" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q3" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q3" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q3" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q3" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                            
+                        <br><br>
 
-        9) gets nervous easily... <br>
-        <input type="radio" name="q9" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q9" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q9" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q9" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q9" value="5">
-            <label for="3">5</label>
-        
-        <br><br>
+                        4) is relaxed, handles stress well... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q4" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q4" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q4" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q4" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q4" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
 
-        10) has an active imagination... <br>
-        <input type="radio" name="q10" value="1">
-            <label for="1">1</label>
-        <input type="radio" name="q10" value="2">
-            <label for="2">2</label>
-        <input type="radio" name="q10" value="3">
-            <label for="3">3</label>
-        <input type="radio" name="q10" value="4">
-            <label for="4">4</label>
-        <input type="radio" name="q10" value="5">
-            <label for="3">5</label>
-        
-        <br><br>
+                        5) has few artistic interests... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q5" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q5" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q5" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q5" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q5" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
 
-        Favorite Genres: (Select FIVE ONLY!)<br>
-        <input type="checkbox" name="genre" value="pop">
-            <label for="genre">Pop</label>
-        <input type="checkbox" name="genre" value="rap">
-            <label for="genre">Rap</label>
-        <input type="checkbox" name="genre" value="rock">
-            <label for="genre">Rock</label>
-        <input type="checkbox" name="genre" value="country">
-            <label for="genre">Country</label>
-        <input type="checkbox" name="genre" value="indie">
-            <label for="genre">pov: indie</label>
-        
-        <br>
+                        6) is outgoing and sociable... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q6" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q6" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q6" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q6" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q6" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
 
-        <input type="checkbox" name="genre" value="metal">
-            <label for="genre">Metal</label>
-        <input type="checkbox" name="genre" value="poppunk">
-            <label for="genre">Pop-Punk</label>
-        <input type="checkbox" name="genre" value="edm">
-            <label for="genre">EDM</label>
-        <input type="checkbox" name="genre" value="soul">
-            <label for="genre">soul</label>
-        <input type="checkbox" name="genre" value="singersongwriter">
-            <label for="genre">Singer-songwriter</label>
+                        7) tends to find fault with others... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q7" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q7" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q7" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q7" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q7" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
 
-        <br><br>
+                        8) does a thorough job... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q8" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q8" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q8" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q8" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q8" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
 
-        <input type="submit">
-    </form>
+                        9) gets nervous easily... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q9" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q9" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q9" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q9" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q9" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
 
-    <br><br>
+                        10) has an active imagination... <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q10" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q10" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q10" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q10" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="q10" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+                    </div>
+                </div>
+                <center><input type="submit" name='getrecos' value="Send" class="btn w-50" style="background-color: rgb(3, 37, 69); color: white" data-toggle="modal" data-target="#myModal"></center>
+                </form>
+            </div>
+        </div>
 
-     {{ htmlstr|safe }}
-</body>
-</html>
+        <footer class="text-center text-lg-start bg-body-tertiary text-muted" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
+            <section class="d-flex justify-content-center justify-content-lg-between" style="background-color: rgb(3, 37, 69); color: white">
+              <div class="container text-center text-md-start my-3">
+                <center>
+                    © 2024 Copyright:  &nbsp&nbsp<b>Jan Anonuevo | Gian Pangan | Jill Alday</b>
+                </center>
+              </div>
+            </section>
+        </footer>
+    </body>

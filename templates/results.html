@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Using Item Personality Based Profiling in Music Recommender Systems</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="icon" type="image/x-icon" href="assets/img/FF_Logos Engineering & Design_LO.png">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+        <style>
+            .intro{
+                background-image: url('/static/header-opaque.jpg'); 
+                background-repeat: no-repeat; 
+                background-size:cover;
+                color: white; 
+                height: 40rem;
+            }
+        </style>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg p-2" style="background-color: rgb(3, 37, 69); box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
+            <div class="mx-3" style="border-right: 1px solid white">
+                <b><a class="navbar-brand" href="#" style="color: white">Thesis</a></b>
+            </div>
+             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+  
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav" style="color: white">
+                <li class="nav-item active">
+                  <a class="nav-link mx-3" href="#" style="color: white">Recommender Survey</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-3" href="#" style="color: white">Results</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-3" href="#" style="color: white">Model Survey</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+        <div class="w-100 text-center outer-div d-flex justify-content-center align-items-center intro">
+            <div class="inner-div w-75">
+                <h1 class="display-5 fade-in" style="font-weight: bold">Using Item Personality Based Profiling in Music Recommender Systems</h1>
+                <br>
+                <p style="font-size:1.3rem">Please review the recommendations given to you by our models. After scanning the songs recommended to you, please answer the next survey.</p>
+                <br>
+                <button type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#exampleModal">
+                  Answer Survey
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="exampleModalLabel">Model Survey</h5>
+                      </div>
+                      <div class="modal-body">
+                        <form method="POST">
+                          <h6 class="text-uppercase fw-bold mb-5">Recommendation Quality</h6>
+                        
+                        1) The songs in the recommendation list matched my interests <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq1" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq1" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq1" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq1" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq1" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+                        
+                        2) The songs in the recommendation list were well-chosen <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq2" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq2" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq2" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq2" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq2" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+                        
+                        3) The songs in the recommendation list are relevant <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq3" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq3" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq3" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq3" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rqq3" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+
+                        <h6 class="text-uppercase fw-bold my-5">Recommendation Diversity</h6>
+
+                        1) I consider the songs in the recommendation list to be diverse. <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq1" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq1" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq1" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq1" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq1" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+
+                        2) I consider the songs in the recommendation lsit to be spread out from their own unique qualities <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq2" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq2" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq2" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq2" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq2" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+
+                        3) I consider the songs in the recommendation list to be of variety <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq3" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq3" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq3" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq3" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdq3" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                      
+                        <h6 class="text-uppercase fw-bold my-5">User Satisfaction</h6>
+
+                        1) Overall, I am satisfied with the recommendation list <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq1" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq1" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq1" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq1" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq1" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+
+                        2) I am convinced of the songs recommended to me by the recommendation list <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq2" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq2" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq2" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq2" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq2" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br>
+
+                        3) I am confident that I will like the songs recommended to me <br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq3" id="inlineRadio1" value="1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq3" id="inlineRadio2" value="2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq3" id="inlineRadio1" value="3">
+                            <label class="form-check-label" for="inlineRadio1">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq3" id="inlineRadio2" value="4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="usq3" id="inlineRadio2" value="5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        
+                        <br><br><br><br>
+                          <center><input type="submit" name='getsurvey' value="Submit" class="btn w-50" style="background-color: rgb(3, 37, 69); color: white" data-toggle="modal" data-target="#myModal"></center>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+
+        <div class="container w-75 my-5">
+            <h4 class="text-center"> IPP Based Model Results </h4>
+            {{ htmlstrr|safe }}
+        </div>
+
+        <footer class="text-center text-lg-start bg-body-tertiary text-muted" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
+            <section class="d-flex justify-content-center justify-content-lg-between" style="background-color: rgb(3, 37, 69); color: white">
+              <div class="container text-center text-md-start my-3">
+                <center>
+                    © 2024 Copyright:  &nbsp&nbsp<b>Jan Anonuevo | Gian Pangan | Jill Alday</b>
+                </center>
+              </div>
+            </section>
+        </footer>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>

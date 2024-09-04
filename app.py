@@ -156,7 +156,6 @@ df_new_users =  {
 
 connect_str = "DefaultEndpointsProtocol=https;AccountName=musicrecommender;AccountKey=xuY+OSYHySZDuIiMnbR5n6u0RvY7cjfqrkUupdG+KVJ5bFmR8N+PSyQPzxktS4SFFfW49mhGu/k0+AStYg8XXw==;EndpointSuffix=core.windows.net"
 container_name = "csvs"
-blob_name = "new_users.csv"
 
 def getCSV(connect_str, container_name, blob_name):
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
@@ -376,40 +375,66 @@ def index():
 
 @app.route("/", methods=['POST'])
 def get_recos():
-    global df_new_users
-    with app.app_context():
-        q1 = int(request.form['q1'])
-        q2 = int(request.form['q2'])
-        q3 = int(request.form['q3'])
-        q4 = int(request.form['q4'])
-        q5 = int(request.form['q5'])
-        q6 = int(request.form['q6'])
-        q7 = int(request.form['q7'])
-        q8 = int(request.form['q8'])
-        q9 = int(request.form['q9'])
-        q10 = int(request.form['q10'])
-        top_genres_user = request.form.getlist('genre')
-        recommendations = newUserRecommendation(model, dataset, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
-        
-        df_new_users['q1'] = int(q1)
-        df_new_users['q2'] = int(q2)
-        df_new_users['q3'] = int(q3)
-        df_new_users['q4'] = int(q4)
-        df_new_users['q5'] = int(q5)
-        df_new_users['q6'] = int(q6)
-        df_new_users['q7'] = int(q7)
-        df_new_users['q8'] = int(q8)
-        df_new_users['q9'] = int(q9)
-        df_new_users['q10'] = int(q10)
-        df_new_users['name'] = request.form['name']
-        df_new_users['studentidno'] = request.form['idno']
-        df_new_users['email'] = request.form['email']
-        df_new_users['educationallvl'] = request.form['edu']
-        df_new_users['coursestrand'] = request.form['coursestrand']
+    if 'getrecos' in request.form:
+        global df_new_users
+        with app.app_context():
+            q1 = int(request.form['q1'])
+            q2 = int(request.form['q2'])
+            q3 = int(request.form['q3'])
+            q4 = int(request.form['q4'])
+            q5 = int(request.form['q5'])
+            q6 = int(request.form['q6'])
+            q7 = int(request.form['q7'])
+            q8 = int(request.form['q8'])
+            q9 = int(request.form['q9'])
+            q10 = int(request.form['q10'])
+            top_genres_user = request.form.getlist('genre')
+            recommendations = newUserRecommendation(model, dataset, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
+            
+            htmltable_string = """
+            <table class='table table-striped table-dark'> 
+                <thead>
+                    <tr> 
+                        <th scope='col'>Rank</th>
+                        <th scope='col'>Name</th> 
+                        <th scope='col'>Artist</th> 
+                        <th scope='col'>Spotify Preview</th> 
+                    </tr>
+                </thead>
+                <tbody>
+            """
+            for row, i in zip(recommendations.itertuples(), range(1, 11)):
+                htmltable_string += """
+                <tr> 
+                    <th scope='row'>""" +str(i) +"""</th>
+                    <td>""" +row.name +"""</td> 
+                    <td>""" +row.artists +"""</td> 
+                    <td> <a href='https://open.spotify.com/track/""" +row.songID +"""'> Link to Spotify </a> </td> 
+                </tr>"""
+            htmltable_string += "</tbody></table>"
 
-        append_row_to_csv_blob(connect_str, container_name, blob_name, df_new_users)
+            df_new_users['q1'] = int(q1)
+            df_new_users['q2'] = int(q2)
+            df_new_users['q3'] = int(q3)
+            df_new_users['q4'] = int(q4)
+            df_new_users['q5'] = int(q5)
+            df_new_users['q6'] = int(q6)
+            df_new_users['q7'] = int(q7)
+            df_new_users['q8'] = int(q8)
+            df_new_users['q9'] = int(q9)
+            df_new_users['q10'] = int(q10)
+            df_new_users['name'] = request.form['name']
+            df_new_users['studentidno'] = request.form['idno']
+            df_new_users['email'] = request.form['email']
+            df_new_users['educationallvl'] = request.form['edu']
+            df_new_users['coursestrand'] = request.form['coursestrand']
 
-        return render_template("index.html", htmlstr=recommendations.to_html())
+            append_row_to_csv_blob(connect_str, container_name, "new_users.csv", df_new_users)
+
+            return render_template("results.html", htmlstrr=htmltable_string)
+    elif 'getsurvey' in request.form:
+        #append_row_to_csv_blob(connect_str, container_name, "survey_results.csv", df_new_users)
+        return render_template("index.html")
 
 if __name__ == "__main__":
   app.run(debug=True)
