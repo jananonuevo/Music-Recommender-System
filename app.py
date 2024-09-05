@@ -328,7 +328,7 @@ def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, top_genres_
     return df_personality_profile
 
 def getLargestNumber():
-    new_users = getCSV(connect_str, container_name, blob_name)
+    new_users = getCSV(connect_str, container_name, "new_users.csv")
     userID = new_users['userID'].tolist()
     userID_remove_duplicates = list(set(userID))
     userID_remove_U = [element.replace('U', '') for element in userID_remove_duplicates]
@@ -375,8 +375,8 @@ def index():
 
 @app.route("/", methods=['POST'])
 def get_recos():
+    global df_new_users
     if 'getrecos' in request.form:
-        global df_new_users
         with app.app_context():
             q1 = int(request.form['q1'])
             q2 = int(request.form['q2'])
@@ -433,7 +433,19 @@ def get_recos():
 
             return render_template("results.html", htmlstrr=htmltable_string)
     elif 'getsurvey' in request.form:
-        #append_row_to_csv_blob(connect_str, container_name, "survey_results.csv", df_new_users)
+        df_newusers_surveyresults =  {
+            'userID': df_new_users['userID'],
+            'rqq1': int(request.form['rqq1']),
+            'rqq2': int(request.form['rqq2']),
+            'rqq3': int(request.form['rqq3']),
+            'rdq1': int(request.form['rdq1']),
+            'rdq2': int(request.form['rdq2']),
+            'rdq3': int(request.form['rdq3']),
+            'usq1': int(request.form['usq1']),
+            'usq2': int(request.form['usq2']),
+            'usq3': int(request.form['usq3'])
+            }  
+        append_row_to_csv_blob(connect_str, container_name, "newusers_surveyresults.csv", df_newusers_surveyresults)
         return render_template("index.html")
 
 if __name__ == "__main__":
