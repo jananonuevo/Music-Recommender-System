@@ -13,97 +13,79 @@ import os, uuid
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 
-data = pd.read_csv('ratings.csv')
-users = pd.read_csv('users.csv')
-songs= pd.read_csv('songs.csv')
-
-from lightfm.evaluation import precision_at_k
-from lightfm.evaluation import recall_at_k
-from lightfm.evaluation import auc_score
-
 app = Flask(__name__)  # Create the Flask app instance
 
-def calculate_metrics(model, interactions, train, item_features, user_features, k):
-    precision = precision_at_k(model, interactions, train, item_features=item_features, user_features=user_features, k=k).mean()
-    recall = recall_at_k(model, interactions, train, item_features=item_features, user_features=user_features, k=k).mean()
-    auc = auc_score(model, interactions, None, item_features=item_features, user_features=user_features).mean()
-    return precision, recall, auc
+with open("lightFM_hybrid.pickle", "rb") as file:
+    model1 = pickle.load(file)
 
-#tried lowering learning,weights in creasing th number of features etc.DOES NOT HAVE SIGNIFICANT IMPACT ON RESULTS, NEED TO IMPROVE DATASET
-# default number of recommendations
-K = 10
-# percentage of data used for testing
-TEST_PERCENTAGE = 0.3
-# model learning rate
-LEARNING_RATE = 0.01
-# no of latent factors
-NO_COMPONENTS = 200
-# no of epochs to fit model
-NO_EPOCHS = 30
-# no of threads to fit model
-NO_THREADS = 8
+with open("modelwithoutipp.pickle", "rb") as file:
+    model2 = pickle.load(file)
 
-# regularisation for both user and item features
-ITEM_ALPHA = 0
-USER_ALPHA = 0
+#PREPROCESS DATA
+xls = pd.ExcelFile('surveyData.xlsx')
+songsDF = pd.read_excel(xls, 'songs')
+usersDF = pd.read_excel(xls, 'users')
+interactionsDF = pd.read_excel(xls, 'interactions')
 
-checkpoint = 'lightFM_hybrid'
-# seed for pseudonumber generations
-SEED = 42
+usersDF= pd.concat([usersDF, usersDF['Genres'].str.get_dummies(sep=', ')], axis=1)
+usersDF= usersDF.rename(columns={'Indie / POV : Indie': 'Indie','Pop-Punk':'pop punk','Pop Punk':'pop punk'})
+usersDF.columns = usersDF.columns.str.lower()
 
-songs=songs.drop(['link','userTotal','popularity'
-], axis=1)  # axis=1 drops irrelevant columns
-songs.dtypes
+def getBigFiveScores(df, columns):
+  for col in columns:
+    dummies = pd.get_dummies(df[col], prefix=col, drop_first=False,dtype ='int32')
+    if dummies.shape[1] == 1:
+        raise ValueError(f"No dummy columns created for column: {col}")
+    df = pd.concat([df, dummies], axis=1)
+    df = df.drop(col, axis=1)
+
+  return df
+
+big_five_facets = ['extraversion', 'openness', 'agreeableness', 'conscientiousness', 'neuroticism']
+usersDF = getBigFiveScores(usersDF.copy(), big_five_facets)
+usersDF = usersDF.drop('genres',axis=1)
+usersDF.rename(columns={'userid': 'userID'}, inplace=True)
+
+interactionsDF = interactionsDF.melt(id_vars='userID', var_name='songID', value_name='isLiked')
+interactionsDF = interactionsDF[['userID','songID','isLiked']]
+duplicates = interactionsDF.duplicated(subset=['userID', 'songID'], keep='first')
+
+df_duplicates = interactionsDF[duplicates]
+interactionsDF = interactionsDF[~duplicates]
 
 dataset = Dataset()
-users_cols = users.columns[1:].tolist()
-songs_cols =  songs.columns[3:].tolist()
 
-all_user_features = np.concatenate([users[col].unique() for col in users_cols]).tolist()
-all_item_features = np.concatenate([songs[col].unique() for col in songs_cols]).tolist()
+users_cols = usersDF.columns[1:].tolist()
+songs_cols =  songsDF.columns[5:24].tolist()
+all_user_features = np.concatenate([usersDF[col].unique() for col in users_cols]).tolist()
+all_item_features = np.concatenate([songsDF[col].unique() for col in songs_cols]).tolist()
 
 dataset.fit(
-    users=users['userID'],
-    items=songs['songID'],
+    users=usersDF['userID'],
+    items=songsDF['id'],
     user_features=all_user_features,
     item_features=all_item_features
 )
 
-# number of unique users and items should be 50
 num_users, num_items = dataset.interactions_shape()
-print(f'Num users: {num_users}, num_items: {num_items}.')
 
-(interactions, weights) = dataset.build_interactions(zip(data['userID'], data['songID']))
+(interactions, weights) = dataset.build_interactions(zip(interactionsDF['userID'], interactionsDF['songID']))
 
 def item_feature_generator():
-    for i, row in songs.iterrows():
-        features = row.values[3:]
-        yield (row['songID'], features)
+    for i, row in songsDF.iterrows():
+        #features =  (pd.Series(row.values[5:-1]) ) .fillna(0)
+        features =  (pd.Series(row.values[5:24]) ) .fillna(0)
+        yield (row['id'], features)
 
 def user_feature_generator():
-    for i, row in users.iterrows():
-        features = row.values[1:]
+    for i, row in usersDF.iterrows():
+        #features =  (pd.Series(row.values[1:]) ) .fillna(0)
+        features =  (pd.Series(row.values[1:]) ) .fillna(0)
         yield (row['userID'], features)
 
 item_features = dataset.build_item_features((item_id, item_feature) for item_id, item_feature in item_feature_generator())
 user_features = dataset.build_user_features((user_id, user_feature) for user_id, user_feature in user_feature_generator())
-
-train_interactions, test_interactions = cross_validation.random_train_test_split(
-    interactions, test_percentage=TEST_PERCENTAGE,
-    random_state=np.random.RandomState(SEED)
-)
-
-uids, iids, data_interaction = cross_validation._shuffle(interactions.row, interactions.col, interactions.data, np.random.RandomState(SEED))
-
-cutoff = int((1.0 - TEST_PERCENTAGE) * len(uids))
-test_idx = slice(cutoff, None)
-train_idx = slice(None, cutoff)
-
-test_uids, test_iids = uids[test_idx], iids[test_idx]
-train_uids, train_iids = uids[train_idx], iids[train_idx]
-
-with open("lightFM_hybrid.pickle", "rb") as file:
-    model = pickle.load(file)
+#END PREPROCESS DATA
 
 df_new_users =  {
             'userID': '',
@@ -336,38 +318,38 @@ def getLargestNumber():
     userID_largest_number = max(userID_convert_int)
     return userID_largest_number
 
-def newUserRecommendation(model, dataset, userID=None, new_user_feature=None, k=10):
-      global df_new_users
+def newUserRecommendation(model, userID=None, new_user_feature=None, k=10):
+    global df_new_users
+    
+    userID = getLargestNumber() + 1
+    df_new_users['userID'] = 'U' +str(userID)
 
-      userID = getLargestNumber() + 1
-      df_new_users['userID'] = 'U' +str(userID)
+    mapper_to_internal_ids = dataset.mapping()[2]
+    mapper_to_external_ids = {v: k for k, v in mapper_to_internal_ids.items()}
 
-      mapper_to_internal_ids = dataset.mapping()[2]
-      mapper_to_external_ids = {v: k for k, v in mapper_to_internal_ids.items()}
+    dataset.fit(users=[userID], items=songsDF['id'], user_features=new_user_feature, item_features=all_item_features)
 
-      dataset.fit(users=[userID], items=songs['songID'], user_features=new_user_feature, item_features=all_item_features)
-
-      new_user_feature = [userID,new_user_feature]
-      new_user_feature = dataset.build_user_features([new_user_feature], normalize=False)
+    new_user_feature = [userID,new_user_feature]
+    new_user_feature = dataset.build_user_features([new_user_feature], normalize=False)
       
-      userID_map = dataset.mapping()[0][userID]
-      scores = model.predict(
+    userID_map = dataset.mapping()[0][userID]
+    scores = model.predict(
         userID_map,
         list(dataset.mapping()[1].values()),
         user_features=new_user_feature,
         item_features=item_features
-      )
-      top_k_indices = np.argsort(-scores)[:k]
+    )
+    top_k_indices = np.argsort(-scores)[:k]
 
-      recommended_song_ids = np.vectorize(mapper_to_external_ids.get)(top_k_indices)
-      songs_recommended = songs[songs['songID'].isin(recommended_song_ids)]
+    recommended_song_ids = np.vectorize(mapper_to_external_ids.get)(top_k_indices)
+    songs_recommended = songsDF[songsDF['id'].isin(recommended_song_ids)]
       
-      for row, i in zip(songs_recommended.itertuples(), range(1, 11)):
-        song_id = row.songID
+    for row, i in zip(songs_recommended.itertuples(), range(1, 11)):
+        song_id = row.id
         df_col = 'top' +str(i)
         df_new_users[df_col] = song_id
 
-      return songs_recommended[['songID', 'name', 'artists']]
+    return songs_recommended[['id', 'name', 'artists']]
 
 @app.route('/')
 def index():
@@ -389,9 +371,12 @@ def get_recos():
             q9 = int(request.form['q9'])
             q10 = int(request.form['q10'])
             top_genres_user = request.form.getlist('genre')
-            recommendations = newUserRecommendation(model, dataset, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
             
+            recommendations = newUserRecommendation(model1, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
+            recommendations2 = newUserRecommendation(model2, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
+
             htmltable_string = """
+            <h4 class='text-center'> IPP Based Model Results </h4>
             <table class='table table-striped table-dark'> 
                 <thead>
                     <tr> 
@@ -409,7 +394,30 @@ def get_recos():
                     <th scope='row'>""" +str(i) +"""</th>
                     <td>""" +row.name +"""</td> 
                     <td>""" +row.artists +"""</td> 
-                    <td> <a href='https://open.spotify.com/track/""" +row.songID +"""'> Link to Spotify </a> </td> 
+                    <td> <a href='https://open.spotify.com/track/""" +row.id +"""'> Link to Spotify </a> </td> 
+                </tr>"""
+            htmltable_string += "</tbody></table><br><br>"
+
+            htmltable_string += """
+            <h4 class='text-center'> Without IPP Model Results </h4>
+            <table class='table table-striped table-dark'> 
+                <thead>
+                    <tr> 
+                        <th scope='col'>Rank</th>
+                        <th scope='col'>Name</th> 
+                        <th scope='col'>Artist</th> 
+                        <th scope='col'>Spotify Preview</th> 
+                    </tr>
+                </thead>
+                <tbody>
+            """
+            for row, i in zip(recommendations2.itertuples(), range(1, 11)):
+                htmltable_string += """
+                <tr> 
+                    <th scope='row'>""" +str(i) +"""</th>
+                    <td>""" +row.name +"""</td> 
+                    <td>""" +row.artists +"""</td> 
+                    <td> <a href='https://open.spotify.com/track/""" +row.id +"""'> Link to Spotify </a> </td> 
                 </tr>"""
             htmltable_string += "</tbody></table>"
 
