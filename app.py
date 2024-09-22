@@ -73,13 +73,11 @@ num_users, num_items = dataset.interactions_shape()
 
 def item_feature_generator():
     for i, row in songsDF.iterrows():
-        #features =  (pd.Series(row.values[5:-1]) ) .fillna(0)
         features =  (pd.Series(row.values[5:24]) ) .fillna(0)
         yield (row['id'], features)
 
 def user_feature_generator():
     for i, row in usersDF.iterrows():
-        #features =  (pd.Series(row.values[1:]) ) .fillna(0)
         features =  (pd.Series(row.values[1:]) ) .fillna(0)
         yield (row['userID'], features)
 
@@ -124,16 +122,26 @@ df_new_users =  {
             'selfrating_O': 0.0,
             'selfrating_C': 0.0,
             'selfrating_N': 0.0,
-            'top1': '',
-            'top2': '',
-            'top3': '',
-            'top4': '',
-            'top5': '',
-            'top6': '',
-            'top7': '',
-            'top8': '',
-            'top9': '',
-            'top10': ''
+            'atop1': '',
+            'atop2': '',
+            'atop3': '',
+            'atop4': '',
+            'atop5': '',
+            'atop6': '',
+            'atop7': '',
+            'atop8': '',
+            'atop9': '',
+            'atop10': '',
+            'btop1': '',
+            'btop2': '',
+            'btop3': '',
+            'btop4': '',
+            'btop5': '',
+            'btop6': '',
+            'btop7': '',
+            'btop8': '',
+            'btop9': '',
+            'btop10': ''
             }   
 
 connect_str = "DefaultEndpointsProtocol=https;AccountName=musicrecommender;AccountKey=xuY+OSYHySZDuIiMnbR5n6u0RvY7cjfqrkUupdG+KVJ5bFmR8N+PSyQPzxktS4SFFfW49mhGu/k0+AStYg8XXw==;EndpointSuffix=core.windows.net"
@@ -318,7 +326,7 @@ def getLargestNumber():
     userID_largest_number = max(userID_convert_int)
     return userID_largest_number
 
-def newUserRecommendation(model, userID=None, new_user_feature=None, k=10):
+def newUserRecommendation(model, model_type, dataset, userID=None, new_user_feature=None, k=10):
     global df_new_users
     
     userID = getLargestNumber() + 1
@@ -346,7 +354,7 @@ def newUserRecommendation(model, userID=None, new_user_feature=None, k=10):
       
     for row, i in zip(songs_recommended.itertuples(), range(1, 11)):
         song_id = row.id
-        df_col = 'top' +str(i)
+        df_col = str(model_type) +'top' +str(i)
         df_new_users[df_col] = song_id
 
     return songs_recommended[['id', 'name', 'artists']]
@@ -372,8 +380,8 @@ def get_recos():
             q10 = int(request.form['q10'])
             top_genres_user = request.form.getlist('genre')
             
-            recommendations = newUserRecommendation(model1, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
-            recommendations2 = newUserRecommendation(model2, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
+            recommendations = newUserRecommendation(model1, 'a', dataset, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
+            recommendations2 = newUserRecommendation(model2, 'b', dataset, new_user_feature=computePersonalityScore(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,top_genres_user))
 
             htmltable_string = """
             <h4 class='text-center'> IPP Based Model Results </h4>
@@ -383,7 +391,8 @@ def get_recos():
                         <th scope='col'>Rank</th>
                         <th scope='col'>Name</th> 
                         <th scope='col'>Artist</th> 
-                        <th scope='col'>Spotify Preview</th> 
+                        <th scope='col'>Spotify Preview</th>
+                        <th scope='col'>Like/Dislike</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -395,6 +404,7 @@ def get_recos():
                     <td>""" +row.name +"""</td> 
                     <td>""" +row.artists +"""</td> 
                     <td> <a href='https://open.spotify.com/track/""" +row.id +"""'> Link to Spotify </a> </td> 
+                    <td> <center><input class='form-check-input' type='checkbox' name='like_atop""" +str(i) +"""' id='defaultCheck1'></center> </td>
                 </tr>"""
             htmltable_string += "</tbody></table><br><br>"
 
@@ -407,6 +417,7 @@ def get_recos():
                         <th scope='col'>Name</th> 
                         <th scope='col'>Artist</th> 
                         <th scope='col'>Spotify Preview</th> 
+                        <th scope='col'>Like/Dislike</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -418,8 +429,9 @@ def get_recos():
                     <td>""" +row.name +"""</td> 
                     <td>""" +row.artists +"""</td> 
                     <td> <a href='https://open.spotify.com/track/""" +row.id +"""'> Link to Spotify </a> </td> 
+                    <td> <center><input class='form-check-input' type='checkbox' name='like_btop""" +str(i) +"""' id='defaultCheck1'></center> </td>
                 </tr>"""
-            htmltable_string += "</tbody></table>"
+            htmltable_string += "</tbody></table></form>"
 
             df_new_users['q1'] = int(q1)
             df_new_users['q2'] = int(q2)
@@ -443,15 +455,34 @@ def get_recos():
     elif 'getsurvey' in request.form:
         df_newusers_surveyresults =  {
             'userID': df_new_users['userID'],
-            'rqq1': int(request.form['rqq1']),
-            'rqq2': int(request.form['rqq2']),
-            'rqq3': int(request.form['rqq3']),
-            'rdq1': int(request.form['rdq1']),
-            'rdq2': int(request.form['rdq2']),
-            'rdq3': int(request.form['rdq3']),
-            'usq1': int(request.form['usq1']),
-            'usq2': int(request.form['usq2']),
-            'usq3': int(request.form['usq3'])
+            'aq1': int(request.form['aq1']),
+            'aq2': int(request.form['aq2']),
+            'aq3': int(request.form['aq3']),
+            'bq1': int(request.form['bq1']),
+            'bq2': int(request.form['bq2']),
+            'bq3': int(request.form['bq3']),
+            'lcq1': request.form['lcq1'],
+            'lcq2': request.form['lcq2'],
+            'like_atop1': '1' if request.form.get('like_atop1') else '0',
+            'like_atop2': '1' if request.form.get('like_atop2') else '0',
+            'like_atop3': '1' if request.form.get('like_atop3') else '0',
+            'like_atop4': '1' if request.form.get('like_atop4') else '0',
+            'like_atop5': '1' if request.form.get('like_atop5') else '0',
+            'like_atop6': '1' if request.form.get('like_atop6') else '0',
+            'like_atop7': '1' if request.form.get('like_atop7') else '0',
+            'like_atop8': '1' if request.form.get('like_atop8') else '0',
+            'like_atop9': '1' if request.form.get('like_atop9') else '0',
+            'like_atop10': '1' if request.form.get('like_atop10') else '0',
+            'like_btop1': '1' if request.form.get('like_btop1') else '0',
+            'like_btop2': '1' if request.form.get('like_btop2') else '0',
+            'like_btop3': '1' if request.form.get('like_btop3') else '0',
+            'like_btop4': '1' if request.form.get('like_btop4') else '0',
+            'like_btop5': '1' if request.form.get('like_btop5') else '0',
+            'like_btop6': '1' if request.form.get('like_btop6') else '0',
+            'like_btop7': '1' if request.form.get('like_btop7') else '0',
+            'like_btop8': '1' if request.form.get('like_btop8') else '0',
+            'like_btop9': '1' if request.form.get('like_btop9') else '0',
+            'like_btop10': '1' if request.form.get('like_btop10') else '0'
             }  
         append_row_to_csv_blob(connect_str, container_name, "newusers_surveyresults.csv", df_newusers_surveyresults)
         return render_template("index.html")
