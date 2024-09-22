@@ -18,6 +18,12 @@
                 height: 40rem;
             }
         </style>
+
+        <script>
+            function thankYou() {
+                alert("Thank you for answering our survey. Redirecting to first page.");
+            }
+        </script>
     </head>
 
     <body>
@@ -40,7 +46,7 @@
             <div class="inner-div w-75">
                 <h1 class="display-5 fade-in" style="font-weight: bold">Using Item Personality Based Profiling in Music Recommender Systems</h1>
                 <br>
-                <p style="font-size:1.3rem">Please review the recommendations given to you by our models. After scanning the songs recommended to you, please answer the next survey.</p>
+                <p style="font-size:1.3rem">Please review the recommendations given to you by our models and check the checkbox to indicate a like or dislike rating for the song. After scanning the songs recommended to you, please answer the next survey.</p>
                 <br>
                 <button type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#exampleModal">
                   Answer Survey
@@ -59,27 +65,29 @@
                       <div class="modal-body">
                         <form method="POST">
                         
+                            <p> Answer the following questions from the first and second section using this likert scale: <br>1 - Strong Disagree, 5 - Strongly Agree <br> For the third section, just answer accordingly.</p>
+
                         <h6 class="text-uppercase fw-bold my-5">List A: IPP Based Model</h6>
 
                         1) The items recommended to me in List A matched my interests. <br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio1" value="1">
+                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio1" value="1" required>
                             <label class="form-check-label" for="inlineRadio1">1</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio2" value="2">
+                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio2" value="2" required>
                             <label class="form-check-label" for="inlineRadio2">2</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio1" value="3">
+                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio1" value="3" required>
                             <label class="form-check-label" for="inlineRadio1">3</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio2" value="4">
+                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio2" value="4" required>
                             <label class="form-check-label" for="inlineRadio2">4</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio2" value="5">
+                            <input class="form-check-input" type="radio" name="aq1" id="inlineRadio2" value="5" required>
                             <label class="form-check-label" for="inlineRadio2">5</label>
                         </div>
                         
@@ -87,23 +95,23 @@
                         
                         2) The items recommended to me in List A are diverse (not too similar from each other) <br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio1" value="1">
+                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio1" value="1" required>
                             <label class="form-check-label" for="inlineRadio1">1</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio2" value="2">
+                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio2" value="2" required>
                             <label class="form-check-label" for="inlineRadio2">2</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio1" value="3">
+                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio1" value="3" required>
                             <label class="form-check-label" for="inlineRadio1">3</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio2" value="4">
+                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio2" value="4" required>
                             <label class="form-check-label" for="inlineRadio2">4</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio2" value="5">
+                            <input class="form-check-input" type="radio" name="aq2" id="inlineRadio2" value="5" required>
                             <label class="form-check-label" for="inlineRadio2">5</label>
                         </div>
                         
@@ -111,23 +119,23 @@
                         
                         3) Overall, I am satisfied with the Recommendation List A. <br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio1" value="1">
+                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio1" value="1" required>
                             <label class="form-check-label" for="inlineRadio1">1</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio2" value="2">
+                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio2" value="2" required>
                             <label class="form-check-label" for="inlineRadio2">2</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio1" value="3">
+                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio1" value="3" required>
                             <label class="form-check-label" for="inlineRadio1">3</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio2" value="4">
+                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio2" value="4" required>
                             <label class="form-check-label" for="inlineRadio2">4</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio2" value="5">
+                            <input class="form-check-input" type="radio" name="aq3" id="inlineRadio2" value="5" required>
                             <label class="form-check-label" for="inlineRadio2">5</label>
                         </div>
 
@@ -137,23 +145,23 @@
 
                         1) The items recommended to me in List B matched my interests. <br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio1" value="1">
+                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio1" value="1" required>
                             <label class="form-check-label" for="inlineRadio1">1</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio2" value="2">
+                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio2" value="2" required>
                             <label class="form-check-label" for="inlineRadio2">2</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio1" value="3">
+                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio1" value="3" required>
                             <label class="form-check-label" for="inlineRadio1">3</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio2" value="4">
+                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio2" value="4" required>
                             <label class="form-check-label" for="inlineRadio2">4</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio2" value="5">
+                            <input class="form-check-input" type="radio" name="bq1" id="inlineRadio2" value="5" required>
                             <label class="form-check-label" for="inlineRadio2">5</label>
                         </div>
                         
@@ -161,23 +169,23 @@
 
                         2) The items recommended to me in List B are diverse (not too similar from each other) <br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio1" value="1">
+                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio1" value="1" required>
                             <label class="form-check-label" for="inlineRadio1">1</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio2" value="2">
+                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio2" value="2" required>
                             <label class="form-check-label" for="inlineRadio2">2</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio1" value="3">
+                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio1" value="3" required>
                             <label class="form-check-label" for="inlineRadio1">3</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio2" value="4">
+                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio2" value="4" required>
                             <label class="form-check-label" for="inlineRadio2">4</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio2" value="5">
+                            <input class="form-check-input" type="radio" name="bq2" id="inlineRadio2" value="5" required>
                             <label class="form-check-label" for="inlineRadio2">5</label>
                         </div>
                         
@@ -185,23 +193,23 @@
 
                         3) Overall, I am satisfied with the Recommendation List B. <br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio1" value="1">
+                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio1" value="1" required>
                             <label class="form-check-label" for="inlineRadio1">1</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio2" value="2">
+                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio2" value="2" required>
                             <label class="form-check-label" for="inlineRadio2">2</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio1" value="3">
+                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio1" value="3" required>
                             <label class="form-check-label" for="inlineRadio1">3</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio2" value="4">
+                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio2" value="4" required>
                             <label class="form-check-label" for="inlineRadio2">4</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio2" value="5">
+                            <input class="form-check-input" type="radio" name="bq3" id="inlineRadio2" value="5" required>
                             <label class="form-check-label" for="inlineRadio2">5</label>
                         </div>
 
@@ -211,16 +219,16 @@
 
                         1) Which recommendation list is more interesting to you (matched more of your interests)? <br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="lcq1" id="inlineRadio1" value="A">
+                            <input class="form-check-input" type="radio" name="lcq1" id="inlineRadio1" value="A" required>
                             <label class="form-check-label" for="inlineRadio1">A</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="lcq1" id="inlineRadio2" value="B">
+                            <input class="form-check-input" type="radio" name="lcq1" id="inlineRadio2" value="B" required>
                             <label class="form-check-label" for="inlineRadio2">B</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="lcq1" id="inlineRadio1" value="Hard to Tell">
-                            <label class="form-check-label" for="inlineRadio1">Not Sure</label>
+                            <input class="form-check-input" type="radio" name="lcq1" id="inlineRadio1" value="Hard to Tell" required>
+                            <label class="form-check-label" for="inlineRadio1">Hard to Tell</label>
                         </div>
                         
                         <br><br>
@@ -236,11 +244,11 @@
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="lcq2" id="inlineRadio1" value="Hard to Tell">
-                            <label class="form-check-label" for="inlineRadio1">Not Sure</label>
+                            <label class="form-check-label" for="inlineRadio1">Hard to Tell</label>
                         </div>
                         
                         <br><br><br><br>
-                          <center><input type="submit" name='getsurvey' value="Submit" class="btn w-50" style="background-color: rgb(3, 37, 69); color: white" data-toggle="modal" data-target="#myModal"></center>
+                          <center><input type="submit" name='getsurvey' value="Submit" class="btn w-50" style="background-color: rgb(3, 37, 69); color: white" data-toggle="modal" data-target="#myModal" onclick="thankYou()"></center>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
