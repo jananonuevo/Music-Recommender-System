@@ -7,5 +7,6 @@ matplotlib
 flask
 azure-storage-blob
 azure-identity
+openpyxl
 lightfm
 gunicorn
