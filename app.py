@@ -275,6 +275,8 @@ def newUserRecommendation(model, model_type, dataset, userID=None, new_user_feat
 
 @app.route('/')
 def index():
+    session.clear()
+    
     session['df_new_users'] =  {
             'userID': '',
             'name': '',
