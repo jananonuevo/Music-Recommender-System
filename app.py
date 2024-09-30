@@ -261,14 +261,13 @@ def newUserRecommendation(model, model_type, dataset, userID=None, new_user_feat
     top_k_indices = np.argsort(-scores)[:k]
     recommended_song_ids = np.vectorize(mapper_to_external_ids.get)(top_k_indices)
     songs_recommended = songsDF[songsDF['songID'].isin(recommended_song_ids)]
-    
-    print(scores)
 
     for row, i in zip(songs_recommended.itertuples(), range(1, 11)):
         song_id = row.songID
         df_col = str(model_type) +'top' +str(i)
         session['df_new_users'][df_col] = song_id
     
+    print("User: " +session['df_new_users']['name'] +"\nModel " +model_type +"\n")
     print(songs_recommended[['songID', 'name', 'artists']])
     
     return songs_recommended[['songID', 'name', 'artists']]
