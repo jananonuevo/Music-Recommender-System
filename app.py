@@ -134,46 +134,46 @@ def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, top_genres_
     session['df_new_users']['conscientiousness'] = reverseScore(q3) + q8
     session['df_new_users']['neuroticism'] = reverseScore(q4) + q9
 
-    session['df_new_users']['selfrating_E'] = ((((session['df_new_users']['extraversion'] / 2) - 2.142857143) / 0.5267566112) * 10) + 50
-    session['df_new_users']['selfrating_A'] = ((((session['df_new_users']['agreeableness'] / 2) - 3.376190476) / 0.7807200584) * 10) + 50
-    session['df_new_users']['selfrating_O'] = ((((session['df_new_users']['openness'] / 2) - 3.476190476) / 0.7977762133) * 10) + 50
-    session['df_new_users']['selfrating_C'] = ((((session['df_new_users']['conscientiousness'] / 2) - 3.138095238) / 0.7019726261) * 10) + 50
-    session['df_new_users']['selfrating_N'] = ((((session['df_new_users']['neuroticism'] / 2) - 3.152380952) / 0.9331599787) * 10) + 50
+    session['df_new_users']['selfrating_E'] = ((((session['df_new_users']['extraversion'] / 2) - 2.128712871) / 0.5275104992) * 10) + 50
+    session['df_new_users']['selfrating_A'] = ((((session['df_new_users']['agreeableness'] / 2) - 3.381188119) / 0.7878721814) * 10) + 50
+    session['df_new_users']['selfrating_O'] = ((((session['df_new_users']['openness'] / 2) - 3.445544554) / 0.7902562562) * 10) + 50
+    session['df_new_users']['selfrating_C'] = ((((session['df_new_users']['conscientiousness'] / 2) - 3.128712871) / 0.7019726261) * 10) + 50
+    session['df_new_users']['selfrating_N'] = ((((session['df_new_users']['neuroticism'] / 2) - 3.158415842) / 0.9271749918) * 10) + 50
 
-    if session['df_new_users']['selfrating_E'] < 19:
+    if session['df_new_users']['selfrating_E'] < 45:
         session['df_new_users']['extraversion_low'] = 1
-    elif session['df_new_users']['selfrating_E'] >= 19 and session['df_new_users']['selfrating_E'] <= 28:
-        session['df_new_users']['extraversion_avg'] = 1
-    elif session['df_new_users']['selfrating_E'] > 28:
+    elif session['df_new_users']['selfrating_E'] > 55:
         session['df_new_users']['extraversion_high'] = 1
+    else: 
+        session['df_new_users']['extraversion_avg'] = 1
 
-    if session['df_new_users']['selfrating_A'] < 19:
+    if session['df_new_users']['selfrating_A'] < 45:
         session['df_new_users']['agreeableness_low'] = 1
-    elif session['df_new_users']['selfrating_A'] >= 19 and session['df_new_users']['selfrating_A'] <= 28:
-        session['df_new_users']['agreeableness_avg'] = 1
-    elif session['df_new_users']['selfrating_A'] > 28:
+    elif session['df_new_users']['selfrating_A'] > 55:
         session['df_new_users']['agreeableness_high'] = 1
+    else: 
+        session['df_new_users']['agreeableness_avg'] = 1
 
-    if session['df_new_users']['selfrating_O'] < 19:
+    if session['df_new_users']['selfrating_O'] < 45:
         session['df_new_users']['openness_low'] = 1
-    elif session['df_new_users']['selfrating_O'] >= 19 and session['df_new_users']['selfrating_O'] <= 28:
-        session['df_new_users']['openness_avg'] = 1
-    elif session['df_new_users']['selfrating_O'] > 28:
+    elif session['df_new_users']['selfrating_O'] > 55:
         session['df_new_users']['openness_high'] = 1
+    else:
+        session['df_new_users']['openness_avg'] = 1
 
-    if session['df_new_users']['selfrating_C'] < 19:
+    if session['df_new_users']['selfrating_C'] < 45:
         session['df_new_users']['conscientiousness_low'] = 1
-    elif session['df_new_users']['selfrating_C'] >= 19 and session['df_new_users']['selfrating_C'] <= 28:
-        session['df_new_users']['conscientiousness_avg'] = 1
-    elif session['df_new_users']['selfrating_C'] > 28:
+    elif session['df_new_users']['selfrating_C'] > 55:
         session['df_new_users']['conscientiousness_high'] = 1
+    else:
+        session['df_new_users']['conscientiousness_avg'] = 1
 
-    if session['df_new_users']['selfrating_N'] < 19:
+    if session['df_new_users']['selfrating_N'] < 45:
         session['df_new_users']['neuroticism_low'] = 1
-    elif session['df_new_users']['selfrating_N'] >= 19 and session['df_new_users']['selfrating_N'] <= 28:
-        session['df_new_users']['neuroticism_avg'] = 1
-    elif session['df_new_users']['selfrating_N'] > 28:
+    elif session['df_new_users']['selfrating_N'] > 55:
         session['df_new_users']['neuroticism_high'] = 1
+    else:
+        session['df_new_users']['neuroticism_avg'] = 1
 
     for i in range(len(top_genres_user)):
         if top_genres_user[i] == 'edm':
