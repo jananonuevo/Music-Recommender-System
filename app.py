@@ -55,22 +55,22 @@ user_features_columns = [ 'country', 'edm', 'indie', 'metal', 'pop', 'pop punk',
 
 IPPdataset= Dataset()
 IPPdataset.fit(
-            users=usersDF['userID'].unique(),
-            items=songsDF['songID'].unique(),
+            users=usersDF['UserID'].unique(),
+            items=songsDF['id'].unique(),
             item_features = item_features_columns,
             user_features= user_features_columns)
 noIPPdataset = Dataset()
 noIPPdataset.fit(
-            users=usersDF['userID'].unique(),
-            items=songsDF['songID'].unique(),
+            users=usersDF['UserID'].unique(),
+            items=songsDF['id'].unique(),
             item_features = item_features_columns[:16],
             user_features= user_features_columns[:10])
 
-IPP_item_features_lookup = [(song_id, {column: value for column, value in zip(item_features_columns, features)}) for song_id, *features in songsDF[['songID'] + item_features_columns].itertuples(index=False)]
-IPP_user_features_lookup = [(user_id, {column: value for column, value in zip(user_features_columns, features)}) for user_id, *features in usersDF[['userID'] +user_features_columns].itertuples(index=False)]
+IPP_item_features_lookup = [(song_id, {column: value for column, value in zip(item_features_columns, features)}) for song_id, *features in songsDF[['id'] + item_features_columns].itertuples(index=False)]
+IPP_user_features_lookup = [(user_id, {column: value for column, value in zip(user_features_columns, features)}) for user_id, *features in usersDF[['UserID'] +user_features_columns].itertuples(index=False)]
 
-noIPP_item_features_lookup = [(song_id, {column: value for column, value in zip(item_features_columns, features)}) for song_id, *features in songsDF[['songID'] + item_features_columns[:16]].itertuples(index=False)]
-noIPP_user_features_lookup = [(user_id, {column: value for column, value in zip(user_features_columns, features)}) for user_id, *features in usersDF[['userID'] +user_features_columns[:10]].itertuples(index=False)]
+noIPP_item_features_lookup = [(song_id, {column: value for column, value in zip(item_features_columns, features)}) for song_id, *features in songsDF[['id'] + item_features_columns[:16]].itertuples(index=False)]
+noIPP_user_features_lookup = [(user_id, {column: value for column, value in zip(user_features_columns, features)}) for user_id, *features in usersDF[['UserID'] +user_features_columns[:10]].itertuples(index=False)]
 
 IPP_item_features_list = IPPdataset.build_item_features(IPP_item_features_lookup,normalize=True)
 IPP_user_features_list = IPPdataset.build_user_features(IPP_user_features_lookup,normalize=True)
