@@ -134,11 +134,11 @@ def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, top_genres_
     session['df_new_users']['conscientiousness'] = reverseScore(q3) + q8
     session['df_new_users']['neuroticism'] = reverseScore(q4) + q9
 
-    session['df_new_users']['selfrating_E'] = ((((session['df_new_users']['extraversion'] / 2) - 2.128712871) / 0.5275104992) * 10) + 50
-    session['df_new_users']['selfrating_A'] = ((((session['df_new_users']['agreeableness'] / 2) - 3.381188119) / 0.7878721814) * 10) + 50
-    session['df_new_users']['selfrating_O'] = ((((session['df_new_users']['openness'] / 2) - 3.445544554) / 0.7902562562) * 10) + 50
-    session['df_new_users']['selfrating_C'] = ((((session['df_new_users']['conscientiousness'] / 2) - 3.128712871) / 0.7019726261) * 10) + 50
-    session['df_new_users']['selfrating_N'] = ((((session['df_new_users']['neuroticism'] / 2) - 3.158415842) / 0.9271749918) * 10) + 50
+    session['df_new_users']['selfrating_E'] = ((((session['df_new_users']['extraversion'] / 2) - 2.851485149) / 0.850131032) * 10) + 50
+    session['df_new_users']['selfrating_A'] = ((((session['df_new_users']['agreeableness'] / 2) - 3.381188119) / 0.787872181) * 10) + 50
+    session['df_new_users']['selfrating_O'] = ((((session['df_new_users']['openness'] / 2) - 3.445544554) / 0.790256256) * 10) + 50
+    session['df_new_users']['selfrating_C'] = ((((session['df_new_users']['conscientiousness'] / 2) - 3.128712871) / 0.709413368) * 10) + 50
+    session['df_new_users']['selfrating_N'] = ((((session['df_new_users']['neuroticism'] / 2) - 3.158415842) / 0.927174992) * 10) + 50
 
     if session['df_new_users']['selfrating_E'] < 45:
         session['df_new_users']['extraversion_low'] = 1
