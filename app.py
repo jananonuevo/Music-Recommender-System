@@ -28,7 +28,7 @@ xls = pd.ExcelFile('surveyData.xlsx')
 songsDF = pd.read_excel(xls, 'songs')
 usersDF = pd.read_excel(xls, 'users')
 interactionsDF = pd.read_excel(xls, 'interactions')
-mainsheet = pd.read_excel(xls, 'Sheet1')
+userpersonalityDF = pd.read_excel(xls, 'userPersonality')
 
 #Load Dataset
 #Dataset Setup for both models ( Does not include new user)
@@ -135,11 +135,11 @@ def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, top_genres_
     session['df_new_users']['conscientiousness'] = (reverseScore(q3) + q8) / 2
     session['df_new_users']['neuroticism'] = (reverseScore(q4) + q9) / 2
 
-    session['df_new_users']['selfrating_E'] = ((((session['df_new_users']['extraversion']) - pd.concat([mainsheet['ExtraversionScore'], pd.Series([session['df_new_users']['extraversion']])]).mean() / pd.concat([mainsheet['ExtraversionScore'], pd.Series([session['df_new_users']['extraversion']])]).std() * 10) + 50))
-    session['df_new_users']['selfrating_A'] = ((((session['df_new_users']['agreeableness']) - pd.concat([mainsheet['AgreeablenessScore'], pd.Series([session['df_new_users']['agreeableness']])]).mean() / pd.concat([mainsheet['AgreeablenessScore'], pd.Series([session['df_new_users']['agreeableness']])]).std() * 10) + 50))
-    session['df_new_users']['selfrating_O'] = ((((session['df_new_users']['openness']) - pd.concat([mainsheet['OpennessScore'], pd.Series([session['df_new_users']['openness']])]).mean() / pd.concat([mainsheet['OpennessScore'], pd.Series([session['df_new_users']['openness']])]).std() * 10) + 50))
-    session['df_new_users']['selfrating_C'] = ((((session['df_new_users']['conscientiousness']) - pd.concat([mainsheet['ConscientiousnessScore'], pd.Series([session['df_new_users']['conscientiousness']])]).mean() / pd.concat([mainsheet['ConscientiousnessScore'], pd.Series([session['df_new_users']['conscientiousness']])]).std() * 10) + 50))
-    session['df_new_users']['selfrating_N'] = ((((session['df_new_users']['neuroticism']) - pd.concat([mainsheet['NeuroticismScore'], pd.Series([session['df_new_users']['neuroticism']])]).mean() / pd.concat([mainsheet['NeuroticismScore'], pd.Series([session['df_new_users']['neuroticism']])]).std() * 10) + 50))
+    session['df_new_users']['selfrating_E'] = ((((session['df_new_users']['extraversion']) - pd.concat([userpersonalityDF['x(Extraversion)'], pd.Series([session['df_new_users']['extraversion']])]).mean() / pd.concat([userpersonalityDF['x(Extraversion)'], pd.Series([session['df_new_users']['extraversion']])]).std() * 10) + 50))
+    session['df_new_users']['selfrating_A'] = ((((session['df_new_users']['agreeableness']) - pd.concat([userpersonalityDF['x(Agreeableness)'], pd.Series([session['df_new_users']['agreeableness']])]).mean() / pd.concat([userpersonalityDF['x(Agreeableness)'], pd.Series([session['df_new_users']['agreeableness']])]).std() * 10) + 50))
+    session['df_new_users']['selfrating_O'] = ((((session['df_new_users']['openness']) - pd.concat([userpersonalityDF['x(Openness)'], pd.Series([session['df_new_users']['openness']])]).mean() / pd.concat([userpersonalityDF['x(Openness)'], pd.Series([session['df_new_users']['openness']])]).std() * 10) + 50))
+    session['df_new_users']['selfrating_C'] = ((((session['df_new_users']['conscientiousness']) - pd.concat([userpersonalityDF['x(Conscientiousness)'], pd.Series([session['df_new_users']['conscientiousness']])]).mean() / pd.concat([userpersonalityDF['x(Conscientiousness)'], pd.Series([session['df_new_users']['conscientiousness']])]).std() * 10) + 50))
+    session['df_new_users']['selfrating_N'] = ((((session['df_new_users']['neuroticism']) - pd.concat([userpersonalityDF['x(Neuroticism)'], pd.Series([session['df_new_users']['neuroticism']])]).mean() / pd.concat([userpersonalityDF['x(Neuroticism)'], pd.Series([session['df_new_users']['neuroticism']])]).std() * 10) + 50))
 
     if session['df_new_users']['selfrating_E'] < 45:
         session['df_new_users']['extraversion_low'] = 1
