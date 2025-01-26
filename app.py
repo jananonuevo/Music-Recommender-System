@@ -24,65 +24,92 @@ app = Flask(__name__)  # Create the Flask app instance
 app.config['SECRET_KEY'] = getSessionKey()
 
 #Load excel DATA
-xls = pd.ExcelFile('surveyData.xlsx')
-songsDF = pd.read_excel(xls, 'songs')
-usersDF = pd.read_excel(xls, 'users')
-interactionsDF = pd.read_excel(xls, 'interactions')
+xls = pd.ExcelFile('surveyData(10).xlsx')
+songsDF = pd.read_excel(xls, 'songs2')
+usersDF = pd.read_excel(xls, 'users2')
+interactionsDF = pd.read_excel(xls, 'interactions2')
 userpersonalityDF = pd.read_excel(xls, 'userPersonality')
+NEW_USER_ID = 'new_user'
 
-#Load Dataset
-#Dataset Setup for both models ( Does not include new user)
+usersDF=usersDF.fillna(0)
+songsDF=songsDF.fillna(0)
+interactionsDF=interactionsDF.fillna(0)
+
+user_features_columns = [
+        'country', 'edm', 'indie', 'metal', 'pop', 'pop punk', 'rap',
+       'rock', 'singer songwriter', 'soul',
+           'extraversion_high',
+      'extraversion_average', 'extraversion_low', 'agreeableness_high',
+      'agreeableness_average', 'agreeableness_low', 'conscientiousness_high',
+      'conscientiousness_average', 'conscientiousness_low',
+      'neuroticism_high', 'neuroticism_average', 'neuroticism_low',
+      'openness_high', 'openness_average', 'openness_low'
+]
 item_features_columns = [
-       'danceability',
-       'energy', 'acousticness', 'instrumentalness', 'liveness', 'valence',
-       'edm', 'country', 'indie', 'metal', 'pop', 'pop punk', 'rap', 'rock',
-       'singer songwriter', 'soul','extraversion_high',
-'extraversion_average', 'extraversion_low', 'agreeableness_high',
-'agreeableness_average', 'agreeableness_low', 'conscientiousness_high',
-'conscientiousness_average', 'conscientiousness_low',
-'neuroticism_high', 'neuroticism_average', 'neuroticism_low',
-'openness_high', 'openness_average', 'openness_low'
+        'danceability',
+        'energy', 'acousticness', 'instrumentalness', 'liveness', 'valence',
+         'edm', 'country', 'indie', 'metal', 'pop', 'pop punk', 'rap', 'rock',
+        'singer songwriter', 'soul',
+        'extraversion_high',
+        'extraversion_average', 'extraversion_low', 'agreeableness_high',
+        'agreeableness_average', 'agreeableness_low', 'conscientiousness_high',
+        'conscientiousness_average', 'conscientiousness_low',
+        'neuroticism_high', 'neuroticism_average', 'neuroticism_low',
+        'openness_high', 'openness_average', 'openness_low'
 ]
 
-user_features_columns = [ 'country', 'edm', 'indie', 'metal', 'pop', 'pop punk', 'rap',
-       'rock', 'singer songwriter', 'soul','extraversion_high',
-'extraversion_average', 'extraversion_low', 'agreeableness_high',
-'agreeableness_average', 'agreeableness_low', 'conscientiousness_high',
-'conscientiousness_average', 'conscientiousness_low',
-'neuroticism_high', 'neuroticism_average', 'neuroticism_low',
-'openness_high', 'openness_average', 'openness_low'
-       ]
+def item_feature_generator():
+    for i, row in songsDF.iterrows():
+        #features =  (pd.Series(row.values[5:-1]) ) .fillna(0)
+        features =  (pd.Series(row.values[item_features_columns]) ) .fillna(0)
+        yield (row['songID'], features)
 
-IPPdataset= Dataset()
+def user_feature_generator():
+    for i, row in usersDF.iterrows():
+        #features =  (pd.Series(row.values[1:]) ) .fillna(0)
+        features =  (pd.Series(row.values[user_features_columns]) ) .fillna(0)
+        yield (row['userID'], features)
+
+IPPdataset=Dataset()
 IPPdataset.fit(
-            users=usersDF['userID'].unique(),
+            users=np.append(usersDF['userID'].unique(), NEW_USER_ID),
             items=songsDF['songID'].unique(),
             item_features = item_features_columns,
             user_features= user_features_columns)
-noIPPdataset = Dataset()
+
+user_mappings = IPPdataset.mapping()[0]
+user_features_mappings = IPPdataset.mapping()[1] #  user feature map
+item_mappings = IPPdataset.mapping()[2] # item id map
+item_features_mappings = IPPdataset.mapping()[3] # item feature map
+
+# Create inverse mappings
+inv_user_mappings = {v:k for k, v in user_mappings.items()}
+inv_user_features_mappings = {v:k for k, v in user_features_mappings.items()}
+inv_item_mappings = {v:k for k, v in item_mappings.items()}
+inv_item_features_mappings = {v:k for k, v in item_features_mappings.items()}
+len(item_mappings),len(item_features_mappings)
+
+item_features_lookup = [(song_id, {column: value for column, value in zip(item_features_columns, features)}) for song_id, *features in songsDF[['songID'] + item_features_columns].itertuples(index=False)]
+user_features_lookup = [(user_id, {column: value for column, value in zip(user_features_columns, features)}) for user_id, *features in usersDF[['userID'] +user_features_columns].itertuples(index=False)]
+user_features_lookup = user_features_lookup + [(NEW_USER_ID, {feature: 0 for feature in user_features_columns})]
+
+item_features_list = IPPdataset.build_item_features(item_features_lookup,normalize=True)
+user_features_list = IPPdataset.build_user_features(user_features_lookup,normalize=True)
+
+#(interactions, weights) = IPPdataset.build_interactions(interactionsDF[['userID','songID','weight']].values)
+
+noIPPdataset=Dataset()
 noIPPdataset.fit(
-            users=usersDF['userID'].unique(),
-            items=songsDF['songID'].unique(),
-            item_features = item_features_columns[:16],
-            user_features= user_features_columns[:10])
+            users=np.append(usersDF['userID'].unique(), NEW_USER_ID),
+            items=songsDF['songID'].unique())
 
-IPP_item_features_lookup = [(song_id, {column: value for column, value in zip(item_features_columns, features)}) for song_id, *features in songsDF[['songID'] + item_features_columns].itertuples(index=False)]
-IPP_user_features_lookup = [(user_id, {column: value for column, value in zip(user_features_columns, features)}) for user_id, *features in usersDF[['userID'] +user_features_columns].itertuples(index=False)]
-
-noIPP_item_features_lookup = [(song_id, {column: value for column, value in zip(item_features_columns, features)}) for song_id, *features in songsDF[['songID'] + item_features_columns[:16]].itertuples(index=False)]
-noIPP_user_features_lookup = [(user_id, {column: value for column, value in zip(user_features_columns, features)}) for user_id, *features in usersDF[['userID'] +user_features_columns[:10]].itertuples(index=False)]
-
-IPP_item_features_list = IPPdataset.build_item_features(IPP_item_features_lookup,normalize=True)
-IPP_user_features_list = IPPdataset.build_user_features(IPP_user_features_lookup,normalize=True)
-
-noIPP_item_features_list = IPPdataset.build_item_features(noIPP_item_features_lookup,normalize=True)
-noIPP_user_features_list = IPPdataset.build_user_features(noIPP_user_features_lookup,normalize=True)
+#(interactions, weights) = dataset.build_interactions(interactionsDF[['userID','songID']].values)
 
 #Model Setup
-with open("modelwithIPP.pickle", "rb") as file:
+with open("lightFM_hybrid.pickle", "rb") as file:
     IPPmodel = pickle.load(file)
 
-with open("modelnoIPP.pickle", "rb") as file:
+with open("lightFM_CF.pickle", "rb") as file:
     noIPPmodel = pickle.load(file)
 
 connect_str = "DefaultEndpointsProtocol=https;AccountName=musicrecommender;AccountKey=xuY+OSYHySZDuIiMnbR5n6u0RvY7cjfqrkUupdG+KVJ5bFmR8N+PSyQPzxktS4SFFfW49mhGu/k0+AStYg8XXw==;EndpointSuffix=core.windows.net"
@@ -146,35 +173,35 @@ def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, top_genres_
     elif session['df_new_users']['selfrating_E'] > 55:
         session['df_new_users']['extraversion_high'] = 1
     else: 
-        session['df_new_users']['extraversion_avg'] = 1
+        session['df_new_users']['extraversion_average'] = 1
 
     if session['df_new_users']['selfrating_A'] < 45:
         session['df_new_users']['agreeableness_low'] = 1
     elif session['df_new_users']['selfrating_A'] > 55:
         session['df_new_users']['agreeableness_high'] = 1
     else: 
-        session['df_new_users']['agreeableness_avg'] = 1
+        session['df_new_users']['agreeableness_average'] = 1
 
     if session['df_new_users']['selfrating_O'] < 45:
         session['df_new_users']['openness_low'] = 1
     elif session['df_new_users']['selfrating_O'] > 55:
         session['df_new_users']['openness_high'] = 1
     else:
-        session['df_new_users']['openness_avg'] = 1
+        session['df_new_users']['openness_average'] = 1
 
     if session['df_new_users']['selfrating_C'] < 45:
         session['df_new_users']['conscientiousness_low'] = 1
     elif session['df_new_users']['selfrating_C'] > 55:
         session['df_new_users']['conscientiousness_high'] = 1
     else:
-        session['df_new_users']['conscientiousness_avg'] = 1
+        session['df_new_users']['conscientiousness_average'] = 1
 
     if session['df_new_users']['selfrating_N'] < 45:
         session['df_new_users']['neuroticism_low'] = 1
     elif session['df_new_users']['selfrating_N'] > 55:
         session['df_new_users']['neuroticism_high'] = 1
     else:
-        session['df_new_users']['neuroticism_avg'] = 1
+        session['df_new_users']['neuroticism_average'] = 1
 
     for i in range(len(top_genres_user)):
         if top_genres_user[i] == 'edm':
@@ -200,19 +227,19 @@ def computePersonalityScore(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, top_genres_
 
     session['df_personality_profile'] =  {
             'extraversion_high': session['df_new_users']['extraversion_high'],
-            'extraversion_avg': session['df_new_users']['extraversion_avg'],
+            'extraversion_average': session['df_new_users']['extraversion_average'],
             'extraversion_low': session['df_new_users']['extraversion_low'],
             'agreeableness_high': session['df_new_users']['agreeableness_high'],
-            'agreeableness_avg': session['df_new_users']['agreeableness_avg'],
+            'agreeableness_average': session['df_new_users']['agreeableness_average'],
             'agreeableness_low': session['df_new_users']['agreeableness_low'],
             'neuroticism_high': session['df_new_users']['neuroticism_high'],
-            'neuroticism_avg': session['df_new_users']['neuroticism_avg'],
+            'neuroticism_average': session['df_new_users']['neuroticism_average'],
             'neuroticism_low': session['df_new_users']['neuroticism_low'],
             'conscientiousness_high': session['df_new_users']['conscientiousness_high'],
-            'conscientiousness_avg': session['df_new_users']['conscientiousness_avg'],
+            'conscientiousness_average': session['df_new_users']['conscientiousness_average'],
             'conscientiousness_low': session['df_new_users']['conscientiousness_low'],
             'openness_high': session['df_new_users']['openness_high'],
-            'openness_avg': session['df_new_users']['openness_avg'],
+            'openness_average': session['df_new_users']['openness_average'],
             'openness_low': session['df_new_users']['openness_low'],
             'edm': session['df_new_users']['edm'],
             'country': session['df_new_users']['country'],
@@ -238,28 +265,26 @@ def getLargestNumber():
     return userID_largest_number
 
 def newUserRecommendation(model, model_type, dataset, userID=None, new_user_feature=None, k=10):
-    session['userID'] = getLargestNumber() + 1
-    session['df_new_users']['userID'] = 'U' +str(session['userID'])
+    userID = 'new_user'
     mapper_to_internal_ids = dataset.mapping()[2]
     mapper_to_external_ids = {v: k for k, v in mapper_to_internal_ids.items()}
-    session['new_user_features_lookup'] = 0
+
+    userID_map = dataset.mapping()[0][userID]
+    item_ids = list(mapper_to_internal_ids.values())
+
     if model_type == 'A':
-        dataset.fit_partial(
-                users=[session['userID']],
-                user_features= user_features_columns)
-        session['new_user_features_lookup'] = [(session['userID'], {column: value for column, value in zip(user_features_columns, new_user_feature.values())})]
+        new_user_features_lookup = [(userID, new_user_feature)]
+        new_user_feature_matrix = dataset.build_user_features(new_user_features_lookup, normalize=False)
+        scores = model.predict(userID_map, item_ids, user_features=new_user_feature_matrix, item_features=item_features_list)
     else:
-        dataset.fit_partial(
-                    users=[session['userID']],
-                    user_features= user_features_columns[:10])
-        session['new_user_features_lookup'] = [(session['userID'], {column: value for column, value in zip(user_features_columns[:10], new_user_feature.values())})]
+        scores = model.predict(userID_map, list(mapper_to_internal_ids.values()))
 
-    new_user_feature = dataset.build_user_features(session['new_user_features_lookup'], normalize=True)
 
-    session['userID_map'] = dataset.mapping()[0][session['userID']]
-    session['n_items'] = len(dataset.mapping()[2])
-    scores = model.predict(session['userID_map'], np.arange(session['n_items']),new_user_feature)
     top_k_indices = np.argsort(-scores)[:k]
+    recommended_song_ids = np.vectorize(mapper_to_external_ids.get)(top_k_indices)
+    songs_recommended = songsDF[songsDF['songID'].isin(recommended_song_ids)]
+
+    print(songs_recommended[['songID', 'name', 'artists']])
     recommended_song_ids = np.vectorize(mapper_to_external_ids.get)(top_k_indices)
     songs_recommended = songsDF[songsDF['songID'].isin(recommended_song_ids)]
 
@@ -295,19 +320,19 @@ def index():
             'q9':0,
             'q10':0,
             'extraversion_high': 0,
-            'extraversion_avg': 0,
+            'extraversion_average': 0,
             'extraversion_low': 0,
             'agreeableness_high': 0,
-            'agreeableness_avg': 0,
+            'agreeableness_average': 0,
             'agreeableness_low': 0,
             'neuroticism_high': 0,
-            'neuroticism_avg': 0,
+            'neuroticism_average': 0,
             'neuroticism_low': 0,
             'conscientiousness_high': 0,
-            'conscientiousness_avg': 0,
+            'conscientiousness_average': 0,
             'conscientiousness_low': 0,
             'openness_high': 0,
-            'openness_avg': 0,
+            'openness_average': 0,
             'openness_low': 0,
             'edm': 0,
             'country': 0,
@@ -357,6 +382,9 @@ def index():
 def get_recos():
     if 'getrecos' in request.form:
         with app.app_context():
+            session['userID'] = getLargestNumber() + 1
+            session['df_new_users']['userID'] = 'U' +str(session['userID'])
+
             session['top_genres_user'] = request.form.getlist('genre')
             
             session['df_new_users']['q1'] = int(request.form['q1'])
@@ -380,7 +408,7 @@ def get_recos():
             recommendations2 = newUserRecommendation(noIPPmodel, 'B', noIPPdataset, new_user_feature=computePersonalityScore(session['df_new_users']['q1'],session['df_new_users']['q2'],session['df_new_users']['q3'],session['df_new_users']['q4'],session['df_new_users']['q5'],session['df_new_users']['q6'],session['df_new_users']['q7'],session['df_new_users']['q8'],session['df_new_users']['q9'],session['df_new_users']['q10'],session['top_genres_user']))
 
             session['htmltable_string'] = """
-            <h4 class='text-center'> IPP Based Model Results </h4>
+            <h4 class='text-center'> Model A Results </h4>
             <table class='table table-striped table-dark'> 
                 <thead>
                     <tr> 
@@ -393,19 +421,22 @@ def get_recos():
                 </thead>
                 <tbody>
             """
+
             for row, i in zip(recommendations.itertuples(), range(1, 11)):
-                session['htmltable_string'] += """
-                <tr> 
-                    <th scope='row'>""" +str(i) +"""</th>
-                    <td>""" +row.name +"""</td> 
-                    <td>""" +row.artists +"""</td> 
-                    <td> <a href='https://open.spotify.com/track/""" +row.songID +"""'> Link to Spotify </a> </td> 
-                    <td><input class='form-check-input' type='checkbox' name='like_atop""" +str(i) +"""' id='defaultCheck1'></td>
-                </tr>"""
+                session['htmltable_string'] += f"""                                               
+                    <tr>
+                        <th scope='row'>{i}</th> 
+                        <td>{row.name}</td>
+                        <td>{row.artists}</td>
+                        <td> <a href='https://open.spotify.com/track/{row.songID}'> Link to Spotify </a> </td>
+                        <td> <input class='form-check-input' type='checkbox' name='like_btop{i}' id='defaultCheck1'></td>
+                    </tr>
+                    """
             session['htmltable_string'] += "</tbody></table><br><br>"
 
+
             session['htmltable_string'] += """
-            <h4 class='text-center'> Without IPP Model Results </h4>
+            <h4 class='text-center'> Model B Results </h4>
             <table class='table table-striped table-dark'> 
                 <thead>
                     <tr> 
@@ -418,6 +449,8 @@ def get_recos():
                 </thead>
                 <tbody>
             """
+           
+            
             for row, i in zip(recommendations2.itertuples(), range(1, 11)):
                 session['htmltable_string'] += """
                 <tr> 
@@ -428,7 +461,8 @@ def get_recos():
                     <td> <input class='form-check-input' type='checkbox' name='like_btop""" +str(i) +"""' id='defaultCheck1'></td>
                 </tr>"""
             session['htmltable_string'] += "</tbody></table></form>"
-
+            
+            
             append_row_to_csv_blob(connect_str, container_name, "new_users.csv", session['df_new_users'])
 
             return render_template("results.html", htmlstrr=session['htmltable_string'])
