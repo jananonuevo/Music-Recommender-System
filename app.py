@@ -428,7 +428,7 @@ def get_recos():
                         <th scope='row'>{i}</th> 
                         <td>{row.name}</td>
                         <td>{row.artists}</td>
-                        <td> <a href='https://open.spotify.com/track/{row.songID}'> Link to Spotify </a> </td>
+                        <td> <a href='https://open.spotify.com/track/{row.songID}' target='_blank'> Link to Spotify </a> </td>
                         <td> <input class='form-check-input' type='checkbox' name='like_btop{i}' id='defaultCheck1'></td>
                     </tr>
                     """
@@ -457,7 +457,7 @@ def get_recos():
                     <th scope='row'>""" +str(i) +"""</th>
                     <td>""" +row.name +"""</td> 
                     <td>""" +row.artists +"""</td> 
-                    <td> <a href='https://open.spotify.com/track/""" +row.songID +"""'> Link to Spotify </a> </td> 
+                    <td> <a href='https://open.spotify.com/track/""" +row.songID +"""' target='_blank'> Link to Spotify </a> </td> 
                     <td> <input class='form-check-input' type='checkbox' name='like_btop""" +str(i) +"""' id='defaultCheck1'></td>
                 </tr>"""
             session['htmltable_string'] += "</tbody></table></form>"
