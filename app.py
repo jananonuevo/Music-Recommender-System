@@ -433,7 +433,7 @@ def get_recos():
                         <td>{row.name}</td>
                         <td>{row.artists}</td>
                         <td> <a href='https://open.spotify.com/track/{row.songID}' target='_blank'> Link to Spotify </a> </td>
-                        <td> <input class='form-check-input' type='checkbox' name='like_btop{i}' id='defaultCheck1'></td>
+                        <td> <input class='form-check-input' type='checkbox' name='like_atop{i}' id='defaultCheck1'></td>
                     </tr>
                     """
             session['htmltable_string'] += "</tbody></table><br><br>"
