@@ -276,8 +276,12 @@ def newUserRecommendation(model, model_type, dataset, userID=None, new_user_feat
         new_user_features_lookup = [(userID, new_user_feature)]
         new_user_feature_matrix = dataset.build_user_features(new_user_features_lookup, normalize=False)
         scores = model.predict(userID_map, item_ids, user_features=new_user_feature_matrix, item_features=item_features_list)
+        print("Model A Scores\n")
+        print(scores)
     else:
         scores = model.predict(userID_map, list(mapper_to_internal_ids.values()))
+        print("Model B Scores\n")
+        print(scores)
 
 
     top_k_indices = np.argsort(-scores)[:k]
